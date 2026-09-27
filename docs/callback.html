@@ -1,9 +1,61 @@
 <!doctype html>
 <html lang="fr">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Token Studio — Result</title><link rel="stylesheet" href="styles.css"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"></head>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Token Studio — Results</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
 <body>
-<header class="topbar"><div class="shell topbar-inner"><a class="brand" href="/token_studio/"><span class="mark">T</span><span>Token Studio</span></a><a class="top-link" href="/token_studio/">New test</a></div></header>
-<main class="shell result-page"><section class="workspace result-workspace"><div class="workspace-head"><div><p class="eyebrow">AUTHENTICATION RESULT</p><h1>Token inspection</h1><p id="status" class="subtitle">Processing response…</p></div><span class="status-pill success"><i></i> Callback received</span></div>
-<div id="tokens" class="tokens-grid" hidden><article class="token-card"><header><span class="token-icon id-icon">ID</span><div><h2>ID token</h2><p>Identity claims</p></div><button class="copy-button" data-copy="id_token_content">Copy</button></header><div id="id_token_content" class="token-content"></div></article><article class="token-card"><header><span class="token-icon access-icon">↗</span><div><h2>Access token</h2><p>API authorization</p></div><button class="copy-button" data-copy="access_token_content">Copy</button></header><div id="access_token_content" class="token-content"></div></article><article class="token-card"><header><span class="token-icon refresh-icon">↻</span><div><h2>Refresh token</h2><p>Session renewal</p></div><button class="copy-button" data-copy="refresh_token_content">Copy</button></header><div id="refresh_token_content" class="token-content"></div></article></div>
-<div class="result-actions"><a class="button secondary" href="/token_studio/">← New test</a><button id="copyAll" class="button primary">Copy all tokens</button></div>
-</section></main><footer class="footer"><div class="shell">Token Studio · Values are displayed locally for testing only</div></footer><script src="app.js"></script></body></html>
+  <header class="header">
+    <div class="container header-inner">
+      <a class="brand" href="/token_studio/">
+        <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect width="40" height="40" rx="8" fill="#451dc7" />
+          <path d="M7 29 L13 16 L19 22 L25 12 L33 22" stroke="#04f06a" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <span class="brand-text">Token Studio</span>
+      </a>
+      <div class="header-links"><a class="link-muted" href="/token_studio/">New test</a></div>
+    </div>
+  </header>
+
+  <main class="container result-full">
+    <section class="results-panel">
+      <div class="results-head">
+        <div>
+          <p class="eyebrow">Authentication result</p>
+          <h1>Token inspection</h1>
+          <p id="status" class="muted">Processing response…</p>
+        </div>
+        <div class="results-actions">
+          <button id="copyAll" class="btn primary">Copy all tokens</button>
+        </div>
+      </div>
+
+      <div id="tokens" class="three-cols" hidden>
+        <div class="token-block">
+          <div class="token-head"><h3>ID token</h3><button class="copy-btn" data-target="id_token_content">Copy</button></div>
+          <div id="id_token_content" class="token-area"></div>
+        </div>
+
+        <div class="token-block">
+          <div class="token-head"><h3>Access token</h3><button class="copy-btn" data-target="access_token_content">Copy</button></div>
+          <div id="access_token_content" class="token-area"></div>
+        </div>
+
+        <div class="token-block">
+          <div class="token-head"><h3>Refresh token</h3><button class="copy-btn" data-target="refresh_token_content">Copy</button></div>
+          <div id="refresh_token_content" class="token-area"></div>
+        </div>
+      </div>
+
+      <p class="muted small-note">If tokens do not appear check the browser console for CORS/mixed-content errors.</p>
+    </section>
+  </main>
+
+  <footer class="footer"><div class="container">Token Studio — demo only</div></footer>
+<script src="app.js"></script>
+</body>
+</html>

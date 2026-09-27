@@ -1,29 +1,118 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Token Studio — OIDC</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Token Studio — OIDC Test App</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-<header class="topbar"><div class="shell topbar-inner"><a class="brand" href="/token_studio/"><span class="mark">T</span><span>Token Studio</span></a><a class="top-link" href="https://www.wavestone.com/en/" target="_blank" rel="noopener">Wavestone ↗</a></div></header>
-<main class="shell desktop-fit"><section class="workspace">
-  <div class="workspace-head"><div><p class="eyebrow">OIDC TEST WORKSPACE</p><h1>Connect your identity provider</h1><p class="subtitle">Configure a flow, launch authentication and inspect the returned tokens.</p></div><span class="status-pill"><i></i> Ready to test</span></div>
-  <form id="configForm" class="config-form" autocomplete="off">
-    <div class="field span-2"><label for="issuer">Issuer URL</label><input id="issuer" type="url" name="issuer" required value="http://localhost:8080/realms/idp"></div>
-    <div class="field"><label for="client_id">Client ID</label><input id="client_id" type="text" name="client_id" required value="token-studio"></div>
-    <div class="field span-2"><label for="redirect_uri">Redirect URI</label><input id="redirect_uri" type="url" name="redirect_uri" required value="https://nfr-ws.github.io/token_studio/callback.html"></div>
-    <div class="field"><label for="response_type">Response type</label><input id="response_type" type="text" name="response_type" value="code"></div>
-    <div class="field span-2"><label for="scope">Scope</label><input id="scope" type="text" name="scope" value="openid email profile"></div>
-    <label class="pkce"><input type="checkbox" name="pkce" checked><span><b>PKCE enabled</b><small>Recommended for public clients</small></span></label>
-    <details class="advanced span-4"><summary><span>Advanced parameters</span><small>ACR, claims, prompt and custom parameters</small><b>＋</b></summary><div class="advanced-grid">
-      <div class="field"><label>ACR values</label><input type="text" name="acr_values"></div><div class="field"><label>Prompt</label><input type="text" name="prompt"></div>
-      <div class="field"><label>Claims (JSON)</label><textarea name="claims" placeholder='{"id_token":{"auth_time":{"essential":true}}}'></textarea></div><div class="field"><label>Extra parameters</label><textarea name="extra" placeholder="login_hint=user@example.com&#10;ui_locales=en"></textarea></div>
-    </div></details>
-    <div class="form-actions span-4"><span class="form-note">Use HTTPS and never use production credentials in this demo.</span><div><button type="button" id="resetBtn" class="button secondary">Reset</button><button type="submit" class="button primary">Start authentication <span>→</span></button></div></div>
-  </form>
-</section></main>
-<footer class="footer"><div class="shell">Token Studio · OIDC integration lab</div></footer>
+  <header class="header">
+    <div class="container header-inner">
+      <a class="brand" href="/token_studio/" aria-label="Token Studio">
+        <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect width="40" height="40" rx="8" fill="#451dc7" />
+          <path d="M7 29 L13 16 L19 22 L25 12 L33 22" stroke="#04f06a" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <span class="brand-text">Token Studio</span>
+      </a>
+      <div class="header-links">
+        <a class="link-muted" href="https://www.wavestone.com/en/" target="_blank" rel="noopener">Wavestone</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container full-viewport">
+    <section class="panel grid">
+      <div class="left">
+        <h1>Token Studio</h1>
+        <p class="lead">Client OIDC léger pour tester vos intégrations. Interface optimisée pour écran desktop (1366×768) — tout tient sans scroll.</p>
+
+        <form id="configForm" class="form" autocomplete="off">
+          <div class="row">
+            <label class="field">
+              <span class="label">Issuer URL</span>
+              <input id="issuer" name="issuer" type="url" required value="http://localhost:8080/realms/idp">
+            </label>
+            <label class="field">
+              <span class="label">Client ID</span>
+              <input id="client_id" name="client_id" type="text" required value="token-studio">
+            </label>
+          </div>
+
+          <div class="row">
+            <label class="field full">
+              <span class="label">Redirect URI</span>
+              <input id="redirect_uri" name="redirect_uri" type="url" required value="https://nfr-ws.github.io/token_studio/callback.html">
+            </label>
+          </div>
+
+          <div class="row">
+            <label class="field">
+              <span class="label">Response type</span>
+              <input id="response_type" name="response_type" type="text" value="code">
+            </label>
+            <label class="field">
+              <span class="label">Scope</span>
+              <input id="scope" name="scope" type="text" value="openid email profile">
+            </label>
+          </div>
+
+          <div class="row small-row">
+            <label class="checkbox"><input name="pkce" type="checkbox" checked> PKCE (recommended)</label>
+            <button type="button" id="advancedBtn" class="btn ghost">Advanced</button>
+          </div>
+
+          <div class="actions">
+            <button type="submit" class="btn primary">Start authentication</button>
+            <button type="button" id="resetBtn" class="btn outline">Reset</button>
+          </div>
+        </form>
+      </div>
+
+      <aside class="right">
+        <div class="status-card">
+          <div class="status-title">Ready</div>
+          <div class="status-desc">Defaults pre-filled for quick testing.</div>
+          <ul class="checks">
+            <li>Issuer: <code>http://localhost:8080/realms/idp</code></li>
+            <li>Client ID: <code>token-studio</code></li>
+            <li>Redirect: <code>https://nfr-ws.github.io/token_studio/callback.html</code></li>
+          </ul>
+        </div>
+
+        <div class="tips">
+          <h4>Tips</h4>
+          <ol>
+            <li>Register the redirect URI in your IdP.</li>
+            <li>Use PKCE and a public client for SPAs.</li>
+            <li>If token endpoint blocks CORS, use the Flask server.</li>
+          </ol>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">Token Studio — demo only</div>
+  </footer>
+
+  <!-- Advanced modal -->
+  <div id="advancedModal" class="modal" aria-hidden="true">
+    <div class="modal-backdrop"></div>
+    <div class="modal-panel" role="dialog" aria-modal="true">
+      <header class="modal-header"><h3>Advanced parameters</h3><button id="closeAdvanced" class="close">✕</button></header>
+      <div class="modal-body">
+        <label class="field"><span class="label">ACR values</span><input name="acr_values" type="text"></label>
+        <label class="field"><span class="label">Prompt</span><input name="prompt" type="text"></label>
+        <label class="field"><span class="label">Claims (JSON)</span><textarea name="claims" placeholder='{"id_token":{"auth_time":{"essential":true}}}'></textarea></label>
+        <label class="field"><span class="label">Extra params (key=value per line)</span><textarea name="extra" placeholder="login_hint=user@example.com\nui_locales=en"></textarea></label>
+      </div>
+      <footer class="modal-footer"><button id="saveAdvanced" class="btn primary">Save</button><button id="cancelAdvanced" class="btn outline">Cancel</button></footer>
+    </div>
+  </div>
+
 <script src="app.js"></script>
-</body></html>
+</body>
+</html>
