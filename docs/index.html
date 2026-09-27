@@ -18,7 +18,7 @@
         <span class="brand-text">Token Studio</span>
       </a>
       <div class="header-links">
-        <a class="link-muted" href="https://www.wavestone.com/en/" target="_blank" rel="noopener">Wavestone</a>
+        <!-- intentionally left blank -->
       </div>
     </div>
   </header>
@@ -27,14 +27,17 @@
     <section class="panel grid">
       <div class="left">
         <h1>Token Studio</h1>
-        <p class="lead">Client OIDC léger pour tester vos intégrations. Interface optimisée pour écran desktop (1366×768) — tout tient sans scroll.</p>
+        <p class="lead">Client OIDC léger pour tester vos intégrations.</p>
 
         <form id="configForm" class="form" autocomplete="off">
           <div class="row">
-            <label class="field">
+            <label class="field full">
               <span class="label">Issuer URL</span>
               <input id="issuer" name="issuer" type="url" required value="http://localhost:8080/realms/idp">
             </label>
+          </div>
+
+          <div class="row">
             <label class="field">
               <span class="label">Client ID</span>
               <input id="client_id" name="client_id" type="text" required value="token-studio">
@@ -105,7 +108,6 @@
       <header class="modal-header"><h3>Advanced parameters</h3><button id="closeAdvanced" class="close">✕</button></header>
       <div class="modal-body">
         <label class="field"><span class="label">ACR values</span><input name="acr_values" type="text"></label>
-        <label class="field"><span class="label">Prompt</span><input name="prompt" type="text"></label>
         <label class="field"><span class="label">Claims (JSON)</span><textarea name="claims" placeholder='{"id_token":{"auth_time":{"essential":true}}}'></textarea></label>
         <label class="field"><span class="label">Extra params (key=value per line)</span><textarea name="extra" placeholder="login_hint=user@example.com\nui_locales=en"></textarea></label>
       </div>
