@@ -36,7 +36,7 @@
           </div>
 
           <div class="row">
-            <label class="field">
+            <label class="field full">
               <span class="label">Client ID</span>
               <input id="client_id" name="client_id" type="text" required value="token-studio">
             </label>
@@ -50,11 +50,14 @@
           </div>
 
           <div class="row">
-            <label class="field">
+            <label class="field full">
               <span class="label">Response type</span>
               <input id="response_type" name="response_type" type="text" value="code">
             </label>
-            <label class="field">
+          </div>
+
+          <div class="row">
+            <label class="field full">
               <span class="label">Scope</span>
               <input id="scope" name="scope" type="text" value="openid email profile">
             </label>
@@ -82,7 +85,6 @@
     <div class="container">Token Studio — demo only</div>
   </footer>
 
-  <!-- Advanced modal -->
   <div id="advancedModal" class="modal" aria-hidden="true">
     <div class="modal-backdrop"></div>
     <div class="modal-panel" role="dialog" aria-modal="true">
