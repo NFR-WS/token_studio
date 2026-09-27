@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Token Studio (SPA) — OIDC Test App</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main>
+    <h1>Token Studio (SPA)</h1>
+    <p class="lead">Single-page OIDC test client (Authorization Code + PKCE or implicit). Use this to test OIDC from GitHub Pages. Note: token endpoint CORS is required for code exchange in-browser.</p>
+
+    <form id="configForm">
+      <label>Issuer URL
+        <input type="url" name="issuer" required placeholder="https://idp.example.com/auth/realms/demo" />
+      </label>
+
+      <label>Client ID
+        <input type="text" name="client_id" required />
+      </label>
+
+      <label>Redirect URI
+        <input type="url" name="redirect_uri" placeholder="https://<your-user>.github.io/token_studio/callback.html" />
+      </label>
+
+      <label>Response type
+        <input type="text" name="response_type" value="code" />
+        <small class="hint">Examples: <code>code</code> (Authorization Code + PKCE), <code>id_token token</code> (implicit), <code>code id_token</code> (hybrid)</small>
+      </label>
+
+      <label>Scope
+        <input type="text" name="scope" value="openid email profile" />
+      </label>
+
+      <label>ACR values
+        <input type="text" name="acr_values" />
+      </label>
+
+      <label>Claims (JSON)
+        <textarea name="claims" placeholder='{"id_token": {"auth_time": {"essential": true}}}'></textarea>
+      </label>
+
+      <label>Prompt
+        <input type="text" name="prompt" />
+      </label>
+
+      <label>Extra params (one key=value per line)
+        <textarea name="extra" placeholder="login_hint=user@example.com\nui_locales=en"></textarea>
+      </label>
+
+      <label><input type="checkbox" name="pkce" checked /> Use PKCE (required for code flow in public clients)</label>
+
+      <p>
+        <button type="submit">Start authentication</button>
+      </p>
+    </form>
+
+    <section id="notes">
+      <h2>Notes</h2>
+      <ul>
+        <li>Register the redirect URI in your IdP. For GitHub Pages the redirect URI is usually: <code>https://&lt;your-user&gt;.github.io/token_studio/callback.html</code></li>
+        <li>Authorization Code + PKCE is recommended. The browser exchanges code for tokens — this requires the IdP token endpoint to allow CORS.</li>
+        <li>If the IdP does not allow CORS on the token endpoint use the implicit flow (tokens in fragment) or deploy the server app instead.</li>
+      </ul>
+    </section>
+
+    <section id="discoveryResult" hidden>
+      <h2>Discovery</h2>
+      <pre id="discoveryJson"></pre>
+    </section>
+
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
