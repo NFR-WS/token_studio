@@ -1,102 +1,29 @@
 <!doctype html>
-<html lang="en">
+<html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Token Studio (SPA) — OIDC Test App</title>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Token Studio — OIDC</title>
   <link rel="stylesheet" href="styles.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <header class="site-header">
-    <div class="container">
-      <a class="brand" href="/token_studio/">
-        <!-- simple svg-inspired logomark -->
-        <svg width="36" height="36" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <rect width="36" height="36" rx="6" fill="#071b2f" />
-          <path d="M6 26 L12 14 L18 20 L24 10 L30 20" stroke="#d81f4a" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-        <span class="brand-text">Token Studio</span>
-      </a>
-      <nav class="header-right">
-        <a class="cta" href="https://www.wavestone.com/en/" target="_blank" rel="noopener">Wavestone</a>
-      </nav>
-    </div>
-  </header>
-
-  <main class="container">
-    <section class="panel">
-      <h1>Token Studio (SPA)</h1>
-      <p class="lead">A lightweight OIDC test client for your Identity Provider. Designed for quick integration tests using Authorization Code + PKCE or implicit flows.</p>
-
-      <form id="configForm" class="form-grid">
-        <label>Issuer URL
-          <input type="url" name="issuer" required placeholder="https://idp.example.com/auth/realms/demo" value="http://localhost:8080/realms/idp" />
-        </label>
-
-        <label>Client ID
-          <input type="text" name="client_id" required value="token-studio" />
-        </label>
-
-        <label>Redirect URI
-          <input type="url" name="redirect_uri" placeholder="https://<your-user>.github.io/token_studio/callback.html" value="https://nfr-ws.github.io/token_studio/callback.html" />
-        </label>
-
-        <label>Response type
-          <input type="text" name="response_type" value="code" />
-          <small class="hint">Examples: <code>code</code> (Authorization Code + PKCE), <code>id_token token</code> (implicit), <code>code id_token</code> (hybrid)</small>
-        </label>
-
-        <label>Scope
-          <input type="text" name="scope" value="openid email profile" />
-        </label>
-
-        <label>ACR values
-          <input type="text" name="acr_values" />
-        </label>
-
-        <label>Claims (JSON)
-          <textarea name="claims" placeholder='{"id_token": {"auth_time": {"essential": true}}}'></textarea>
-        </label>
-
-        <label>Prompt
-          <input type="text" name="prompt" />
-        </label>
-
-        <label>Extra params (one key=value per line)
-          <textarea name="extra" placeholder="login_hint=user@example.com\nui_locales=en"></textarea>
-        </label>
-
-        <div class="form-footer">
-          <label class="checkbox"><input type="checkbox" name="pkce" checked /> Use PKCE (required for code flow in public clients)</label>
-          <button type="submit" class="btn btn-primary">Start authentication</button>
-        </div>
-      </form>
-
-      <section id="notes" class="muted">
-        <h2>Notes</h2>
-        <ul>
-          <li>Register the redirect URI in your IdP: <code>https://nfr-ws.github.io/token_studio/callback.html</code></li>
-          <li>The SPA exchanges code for tokens in-browser — your IdP token endpoint must allow CORS from GitHub Pages.</li>
-          <li>If the token endpoint blocks CORS use implicit flow or run the Flask server instead.</li>
-        </ul>
-      </section>
-
-    </section>
-
-    <section id="discoveryResult" class="panel" hidden>
-      <h2>Discovery</h2>
-      <pre id="discoveryJson"></pre>
-    </section>
-
-  </main>
-
-  <footer class="site-footer">
-    <div class="container">
-      <small>Token Studio — demo client · Not for production use</small>
-    </div>
-  </footer>
-
-  <script src="app.js"></script>
-</body>
-</html>
+<header class="topbar"><div class="shell topbar-inner"><a class="brand" href="/token_studio/"><span class="mark">T</span><span>Token Studio</span></a><a class="top-link" href="https://www.wavestone.com/en/" target="_blank" rel="noopener">Wavestone ↗</a></div></header>
+<main class="shell desktop-fit"><section class="workspace">
+  <div class="workspace-head"><div><p class="eyebrow">OIDC TEST WORKSPACE</p><h1>Connect your identity provider</h1><p class="subtitle">Configure a flow, launch authentication and inspect the returned tokens.</p></div><span class="status-pill"><i></i> Ready to test</span></div>
+  <form id="configForm" class="config-form" autocomplete="off">
+    <div class="field span-2"><label for="issuer">Issuer URL</label><input id="issuer" type="url" name="issuer" required value="http://localhost:8080/realms/idp"></div>
+    <div class="field"><label for="client_id">Client ID</label><input id="client_id" type="text" name="client_id" required value="token-studio"></div>
+    <div class="field span-2"><label for="redirect_uri">Redirect URI</label><input id="redirect_uri" type="url" name="redirect_uri" required value="https://nfr-ws.github.io/token_studio/callback.html"></div>
+    <div class="field"><label for="response_type">Response type</label><input id="response_type" type="text" name="response_type" value="code"></div>
+    <div class="field span-2"><label for="scope">Scope</label><input id="scope" type="text" name="scope" value="openid email profile"></div>
+    <label class="pkce"><input type="checkbox" name="pkce" checked><span><b>PKCE enabled</b><small>Recommended for public clients</small></span></label>
+    <details class="advanced span-4"><summary><span>Advanced parameters</span><small>ACR, claims, prompt and custom parameters</small><b>＋</b></summary><div class="advanced-grid">
+      <div class="field"><label>ACR values</label><input type="text" name="acr_values"></div><div class="field"><label>Prompt</label><input type="text" name="prompt"></div>
+      <div class="field"><label>Claims (JSON)</label><textarea name="claims" placeholder='{"id_token":{"auth_time":{"essential":true}}}'></textarea></div><div class="field"><label>Extra parameters</label><textarea name="extra" placeholder="login_hint=user@example.com&#10;ui_locales=en"></textarea></div>
+    </div></details>
+    <div class="form-actions span-4"><span class="form-note">Use HTTPS and never use production credentials in this demo.</span><div><button type="button" id="resetBtn" class="button secondary">Reset</button><button type="submit" class="button primary">Start authentication <span>→</span></button></div></div>
+  </form>
+</section></main>
+<footer class="footer"><div class="shell">Token Studio · OIDC integration lab</div></footer>
+<script src="app.js"></script>
+</body></html>

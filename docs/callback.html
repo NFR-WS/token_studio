@@ -1,57 +1,9 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Token Studio — Callback</title>
-  <link rel="stylesheet" href="styles.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-</head>
+<html lang="fr">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Token Studio — Result</title><link rel="stylesheet" href="styles.css"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"></head>
 <body>
-  <header class="site-header">
-    <div class="container">
-      <a class="brand" href="/token_studio/">
-        <svg width="36" height="36" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <rect width="36" height="36" rx="6" fill="#071b2f" />
-          <path d="M6 26 L12 14 L18 20 L24 10 L30 20" stroke="#d81f4a" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-        <span class="brand-text">Token Studio</span>
-      </a>
-    </div>
-  </header>
-
-  <main class="container callback-layout">
-    <section class="panel no-scroll">
-      <h1>Token Studio — Callback</h1>
-      <p id="status" class="muted">Processing response...</p>
-
-      <div id="tokens" class="tokens-grid" hidden>
-        <div class="token-col" id="col-id_token">
-          <h3>ID Token</h3>
-          <div class="token-content" id="id_token_content"></div>
-        </div>
-        <div class="token-col" id="col-access_token">
-          <h3>Access Token</h3>
-          <div class="token-content" id="access_token_content"></div>
-        </div>
-        <div class="token-col" id="col-refresh_token">
-          <h3>Refresh Token</h3>
-          <div class="token-content" id="refresh_token_content"></div>
-        </div>
-      </div>
-
-      <p class="muted">If the tokens do not appear, check the browser console for CORS or mixed-content errors.</p>
-
-      <p><a href="/token_studio/">Back to start</a></p>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="container">
-      <small>Token Studio — demo client</small>
-    </div>
-  </footer>
-
-  <script src="app.js"></script>
-</body>
-</html>
+<header class="topbar"><div class="shell topbar-inner"><a class="brand" href="/token_studio/"><span class="mark">T</span><span>Token Studio</span></a><a class="top-link" href="/token_studio/">New test</a></div></header>
+<main class="shell result-page"><section class="workspace result-workspace"><div class="workspace-head"><div><p class="eyebrow">AUTHENTICATION RESULT</p><h1>Token inspection</h1><p id="status" class="subtitle">Processing response…</p></div><span class="status-pill success"><i></i> Callback received</span></div>
+<div id="tokens" class="tokens-grid" hidden><article class="token-card"><header><span class="token-icon id-icon">ID</span><div><h2>ID token</h2><p>Identity claims</p></div><button class="copy-button" data-copy="id_token_content">Copy</button></header><div id="id_token_content" class="token-content"></div></article><article class="token-card"><header><span class="token-icon access-icon">↗</span><div><h2>Access token</h2><p>API authorization</p></div><button class="copy-button" data-copy="access_token_content">Copy</button></header><div id="access_token_content" class="token-content"></div></article><article class="token-card"><header><span class="token-icon refresh-icon">↻</span><div><h2>Refresh token</h2><p>Session renewal</p></div><button class="copy-button" data-copy="refresh_token_content">Copy</button></header><div id="refresh_token_content" class="token-content"></div></article></div>
+<div class="result-actions"><a class="button secondary" href="/token_studio/">← New test</a><button id="copyAll" class="button primary">Copy all tokens</button></div>
+</section></main><footer class="footer"><div class="shell">Token Studio · Values are displayed locally for testing only</div></footer><script src="app.js"></script></body></html>
