@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>OIDC Callback - Token Studio</title>
+</head>
+<body>
+  <h1>OIDC Callback</h1>
+  <p>This page finalizes the OAuth/OIDC flow. If your IdP returned tokens in the URL fragment (implicit/hybrid), we will extract them and send them to the server.</p>
+  <pre id="status">Waiting...</pre>
+
+  <script>
+    function parseFragment(hash) {
+      if (!hash) return {};
+      if (hash[0] === '#') hash = hash.substr(1);
+      const params = {};
+      hash.split('&').forEach(function(pair) {
+        const parts = pair.split('=');
+        const key = decodeURIComponent(parts[0]);
+        const value = parts.slice(1).join('=');
+        params[key] = decodeURIComponent(value || '');
+      });
+      return params;
+    }
+
+    (function(){
+      const frag = parseFragment(window.location.hash);
+      if (Object.keys(frag).length > 0) {
+        document.getElementById('status').textContent = 'Found tokens in fragment, posting to server...';
+        fetch('/fragment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(frag)
+        }).then(function(resp){
+          return resp.json();
+        }).then(function(data){
+          document.getElementById('status').textContent = 'Server acknowledged tokens; you can view them at /tokens';
+          // Optionally redirect to /tokens
+          window.location = '/tokens';
+        }).catch(function(err){
+          document.getElementById('status').textContent = 'Failed to post fragment: ' + err;
+        });
+      } else {
+        // If there is a code in query params, redirect to /tokens which will trigger exchange
+        const qp = new URLSearchParams(window.location.search);
+        if (qp.get('code')) {
+          document.getElementById('status').textContent = 'Authorization code present; finishing on server...';
+          window.location = '/tokens' + window.location.search;
+        } else {
+          document.getElementById('status').textContent = 'No fragment and no code found. Check your IdP response.';
+        }
+      }
+    })();
+  </script>
+</body>
+</html>
