@@ -18,14 +18,11 @@
         </svg>
         <span class="brand-text">Token Studio</span>
       </a>
-      <div class="header-links">
-        <!-- intentionally left blank -->
-      </div>
     </div>
   </header>
 
   <main class="container full-viewport">
-    <section class="panel grid">
+    <section class="panel single">
       <div class="left">
         <h1>Token Studio</h1>
         <p class="lead">Lightweight OIDC client to test your integrations.</p>
@@ -73,28 +70,11 @@
             <button type="button" id="resetBtn" class="btn outline">Reset</button>
           </div>
         </form>
+
+        <div class="extra-note">
+          <p class="muted">Make sure the redirect URI is registered in your Identity Provider. Use PKCE for public clients.</p>
+        </div>
       </div>
-
-      <aside class="right">
-        <div class="status-card">
-          <div class="status-title">Ready</div>
-          <div class="status-desc">Defaults pre-filled for quick testing.</div>
-          <ul class="checks">
-            <li>Issuer: <code>http://localhost:8080/realms/idp</code></li>
-            <li>Client ID: <code>token-studio</code></li>
-            <li>Redirect: <code>https://nfr-ws.github.io/token_studio/callback.html</code></li>
-          </ul>
-        </div>
-
-        <div class="tips">
-          <h4>Tips</h4>
-          <ol>
-            <li>Register the redirect URI in your IdP.</li>
-            <li>Use PKCE and a public client for SPAs.</li>
-            <li>If token endpoint blocks CORS, use the Flask server.</li>
-          </ol>
-        </div>
-      </aside>
     </section>
   </main>
 
