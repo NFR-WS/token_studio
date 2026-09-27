@@ -137,45 +137,50 @@ document.addEventListener('DOMContentLoaded', () => {
   const discoverySection = document.getElementById('discoveryResult');
   const discoveryJson = document.getElementById('discoveryJson');
 
-  form.addEventListener('submit', async (ev) => {
-    ev.preventDefault();
-    const data = new FormData(form);
-    const cfg = {
-      issuer: data.get('issuer'),
-      client_id: data.get('client_id'),
-      redirect_uri: data.get('redirect_uri') || (location.origin + location.pathname.replace(/\/index.html$/, '') + 'callback.html'),
-      response_type: data.get('response_type') || 'code',
-      scope: data.get('scope') || 'openid',
-      acr_values: data.get('acr_values') || '',
-      claims: data.get('claims') || '',
-      prompt: data.get('prompt') || '',
-      extra: data.get('extra') || '',
-      pkce: data.get('pkce') === 'on'
-    };
+  // Only attach the submit handler if the form exists on the page (index.html)
+  if (form) {
+    form.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const data = new FormData(form);
+      const cfg = {
+        issuer: data.get('issuer'),
+        client_id: data.get('client_id'),
+        redirect_uri: data.get('redirect_uri') || (location.origin + location.pathname.replace(/\/index.html$/, '') + 'callback.html'),
+        response_type: data.get('response_type') || 'code',
+        scope: data.get('scope') || 'openid',
+        acr_values: data.get('acr_values') || '',
+        claims: data.get('claims') || '',
+        prompt: data.get('prompt') || '',
+        extra: data.get('extra') || '',
+        pkce: data.get('pkce') === 'on'
+      };
 
-    sessionStorage.setItem('config', JSON.stringify(cfg));
+      sessionStorage.setItem('config', JSON.stringify(cfg));
 
-    try {
-      const meta = await doDiscovery(cfg.issuer);
-      discoverySection.hidden = false;
-      discoveryJson.textContent = JSON.stringify(meta, null, 2);
+      try {
+        const meta = await doDiscovery(cfg.issuer);
+        if (discoverySection && discoveryJson) {
+          discoverySection.hidden = false;
+          discoveryJson.textContent = JSON.stringify(meta, null, 2);
+        }
 
-      let codeChallenge = null;
-      if (cfg.pkce && cfg.response_type.includes('code')) {
-        const verifier = generateCodeVerifier();
-        sessionStorage.setItem('code_verifier', verifier);
-        codeChallenge = await createCodeChallenge(verifier);
+        let codeChallenge = null;
+        if (cfg.pkce && cfg.response_type.includes('code')) {
+          const verifier = generateCodeVerifier();
+          sessionStorage.setItem('code_verifier', verifier);
+          codeChallenge = await createCodeChallenge(verifier);
+        }
+
+        const url = buildAuthUrl(meta, cfg, codeChallenge);
+        // Redirect to IdP
+        window.location = url;
+
+      } catch (err) {
+        alert('Error: ' + err);
+        console.error(err);
       }
-
-      const url = buildAuthUrl(meta, cfg, codeChallenge);
-      // Redirect to IdP
-      window.location = url;
-
-    } catch (err) {
-      alert('Error: ' + err);
-      console.error(err);
-    }
-  });
+    });
+  }
 
   // If we're on callback.html, handle response
   if (location.pathname.endsWith('callback.html')) {
@@ -198,25 +203,29 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       if (Object.keys(frag).length > 0) {
-        status.textContent = 'Tokens received in fragment. Displaying.';
-        tokensSection.hidden = false;
-        displayTokens(frag, tokensContainer);
+        if (status) status.textContent = 'Tokens received in fragment. Displaying.';
+        if (tokensSection && tokensContainer) {
+          tokensSection.hidden = false;
+          displayTokens(frag, tokensContainer);
+        }
       } else if (qp.code) {
-        status.textContent = 'Authorization code received. Attempting in-browser exchange (requires CORS on token endpoint).';
+        if (status) status.textContent = 'Authorization code received. Attempting in-browser exchange (requires CORS on token endpoint).';
         try {
           const verifier = sessionStorage.getItem('code_verifier');
           if (!meta) throw new Error('Discovery metadata not available; cannot exchange code.');
           const tokenResponse = await exchangeCode(meta, cfg, qp.code, verifier);
-          status.textContent = 'Token exchange successful.';
-          tokensSection.hidden = false;
-          displayTokens(tokenResponse, tokensContainer);
+          if (status) status.textContent = 'Token exchange successful.';
+          if (tokensSection && tokensContainer) {
+            tokensSection.hidden = false;
+            displayTokens(tokenResponse, tokensContainer);
+          }
         } catch (e) {
-          status.textContent = 'Token exchange failed: ' + e;
+          if (status) status.textContent = 'Token exchange failed: ' + e;
           console.error(e);
-          tokensSection.hidden = true;
+          if (tokensSection) tokensSection.hidden = true;
         }
       } else {
-        status.textContent = 'No tokens or code found in the response. Check IdP configuration.';
+        if (status) status.textContent = 'No tokens or code found in the response. Check IdP configuration.';
       }
 
     })();
