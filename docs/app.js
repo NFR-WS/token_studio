@@ -1,9 +1,5 @@
 /* app.js - client-side OIDC test helper for Token Studio (SPA)
- * - Builds authorization URL (supports PKCE)
- * - Performs discovery (/.well-known/openid-configuration)
- * - Exchanges code for tokens in-browser if token endpoint allows CORS
- * - Parses fragment tokens for implicit/hybrid flows
- * - Displays tokens and decodes JWT header & payload (no signature verification)
+ * Updated to render tokens directly into the three-column layout on callback
  */
 
 function base64UrlEncode(arrayBuffer) {
@@ -23,10 +19,9 @@ async function sha256(str) {
 }
 
 function generateCodeVerifier() {
-  // 43-128 chars
   const array = new Uint8Array(68);
   crypto.getRandomValues(array);
-  return Array.from(array).map(b => ('00' + b.toString(16)).slice(-2)).join('').slice(0,86); // hex string
+  return Array.from(array).map(b => ('00' + b.toString(16)).slice(-2)).join('').slice(0,86);
 }
 
 async function createCodeChallenge(verifier) {
@@ -100,7 +95,6 @@ function buildAuthUrl(metadata, cfg, codeChallenge) {
     auth.searchParams.set('code_challenge_method', 'S256');
   }
 
-  // state & nonce
   const state = Math.random().toString(36).slice(2);
   auth.searchParams.set('state', state);
   if (cfg.response_type.includes('id_token')) {
@@ -137,7 +131,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const discoverySection = document.getElementById('discoveryResult');
   const discoveryJson = document.getElementById('discoveryJson');
 
-  // Only attach the submit handler if the form exists on the page (index.html)
   if (form) {
     form.addEventListener('submit', async (ev) => {
       ev.preventDefault();
@@ -172,7 +165,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const url = buildAuthUrl(meta, cfg, codeChallenge);
-        // Redirect to IdP
         window.location = url;
 
       } catch (err) {
@@ -187,7 +179,9 @@ document.addEventListener('DOMContentLoaded', () => {
     (async () => {
       const status = document.getElementById('status');
       const tokensSection = document.getElementById('tokens');
-      const tokensContainer = document.getElementById('tokensContainer');
+      const colId = document.getElementById('id_token_content');
+      const colAccess = document.getElementById('access_token_content');
+      const colRefresh = document.getElementById('refresh_token_content');
 
       const qp = parseQuery(location.search);
       const frag = parseFragment(location.hash);
@@ -202,12 +196,57 @@ document.addEventListener('DOMContentLoaded', () => {
         console.warn('Discovery on callback failed (CORS?)', e);
       }
 
+      function showTokens(obj){
+        if (!tokensSection) return;
+        tokensSection.hidden = false;
+
+        // Helper to render a token into a column
+        const render = (el, val) => {
+          if (!el) return;
+          el.innerHTML = '';
+          if (typeof val === 'object') {
+            el.appendChild(document.createElement('pre')).textContent = JSON.stringify(val, null, 2);
+            return;
+          }
+          // raw token
+          const pre = document.createElement('pre');
+          pre.textContent = val || '';
+          el.appendChild(pre);
+
+          // decode JWT if possible
+          if (typeof val === 'string' && val.split('.').length === 3) {
+            const decoded = decodeJwt(val);
+            if (!decoded.error) {
+              const hdr = document.createElement('details');
+              hdr.innerHTML = '<summary>Header</summary><pre>' + JSON.stringify(decoded.header, null, 2) + '</pre>';
+              el.appendChild(hdr);
+              const pl = document.createElement('details');
+              pl.innerHTML = '<summary>Payload</summary><pre>' + JSON.stringify(decoded.payload, null, 2) + '</pre>';
+              el.appendChild(pl);
+            }
+          }
+        };
+
+        // Preferred keys
+        render(colId, obj.id_token || obj.idToken || obj['id_token']);
+        render(colAccess, obj.access_token || obj.accessToken || obj['access_token']);
+        render(colRefresh, obj.refresh_token || obj.refreshToken || obj['refresh_token']);
+
+        // If other tokens exist, and columns are empty, try to put them
+        Object.keys(obj).forEach(k => {
+          if (['id_token','access_token','refresh_token'].includes(k)) return;
+          // append to access token column as JSON
+          if (colAccess) {
+            const p = document.createElement('pre');
+            p.textContent = k + ': ' + (typeof obj[k] === 'string' ? obj[k] : JSON.stringify(obj[k]));
+            colAccess.appendChild(p);
+          }
+        });
+      }
+
       if (Object.keys(frag).length > 0) {
         if (status) status.textContent = 'Tokens received in fragment. Displaying.';
-        if (tokensSection && tokensContainer) {
-          tokensSection.hidden = false;
-          displayTokens(frag, tokensContainer);
-        }
+        showTokens(frag);
       } else if (qp.code) {
         if (status) status.textContent = 'Authorization code received. Attempting in-browser exchange (requires CORS on token endpoint).';
         try {
@@ -215,14 +254,10 @@ document.addEventListener('DOMContentLoaded', () => {
           if (!meta) throw new Error('Discovery metadata not available; cannot exchange code.');
           const tokenResponse = await exchangeCode(meta, cfg, qp.code, verifier);
           if (status) status.textContent = 'Token exchange successful.';
-          if (tokensSection && tokensContainer) {
-            tokensSection.hidden = false;
-            displayTokens(tokenResponse, tokensContainer);
-          }
+          showTokens(tokenResponse);
         } catch (e) {
           if (status) status.textContent = 'Token exchange failed: ' + e;
           console.error(e);
-          if (tokensSection) tokensSection.hidden = true;
         }
       } else {
         if (status) status.textContent = 'No tokens or code found in the response. Check IdP configuration.';
@@ -231,32 +266,3 @@ document.addEventListener('DOMContentLoaded', () => {
     })();
   }
 });
-
-function displayTokens(obj, container) {
-  container.innerHTML = '';
-  for (const [k, v] of Object.entries(obj)) {
-    const section = document.createElement('section');
-    section.className = 'token-block';
-    const h = document.createElement('h3');
-    h.textContent = k;
-    section.appendChild(h);
-
-    const pre = document.createElement('pre');
-    pre.textContent = (typeof v === 'string') ? v : JSON.stringify(v, null, 2);
-    section.appendChild(pre);
-
-    if (typeof v === 'string' && v.split('.').length === 3) {
-      const decoded = decodeJwt(v);
-      if (!decoded.error) {
-        const hdr = document.createElement('details');
-        hdr.innerHTML = '<summary>Header</summary><pre>' + JSON.stringify(decoded.header, null, 2) + '</pre>';
-        section.appendChild(hdr);
-        const pl = document.createElement('details');
-        pl.innerHTML = '<summary>Payload</summary><pre>' + JSON.stringify(decoded.payload, null, 2) + '</pre>';
-        section.appendChild(pl);
-      }
-    }
-
-    container.appendChild(section);
-  }
-}

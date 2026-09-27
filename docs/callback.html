@@ -5,17 +5,53 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Token Studio — Callback</title>
   <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <main>
-    <h1>Token Studio — Callback</h1>
-    <p id="status">Processing response...</p>
-    <section id="tokens" hidden>
-      <h2>Tokens</h2>
-      <div id="tokensContainer"></div>
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="/token_studio/">
+        <svg width="36" height="36" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect width="36" height="36" rx="6" fill="#071b2f" />
+          <path d="M6 26 L12 14 L18 20 L24 10 L30 20" stroke="#d81f4a" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <span class="brand-text">Token Studio</span>
+      </a>
+    </div>
+  </header>
+
+  <main class="container callback-layout">
+    <section class="panel no-scroll">
+      <h1>Token Studio — Callback</h1>
+      <p id="status" class="muted">Processing response...</p>
+
+      <div id="tokens" class="tokens-grid" hidden>
+        <div class="token-col" id="col-id_token">
+          <h3>ID Token</h3>
+          <div class="token-content" id="id_token_content"></div>
+        </div>
+        <div class="token-col" id="col-access_token">
+          <h3>Access Token</h3>
+          <div class="token-content" id="access_token_content"></div>
+        </div>
+        <div class="token-col" id="col-refresh_token">
+          <h3>Refresh Token</h3>
+          <div class="token-content" id="refresh_token_content"></div>
+        </div>
+      </div>
+
+      <p class="muted">If the tokens do not appear, check the browser console for CORS or mixed-content errors.</p>
+
+      <p><a href="/token_studio/">Back to start</a></p>
     </section>
-    <p><a href="/token_studio/">Back to start</a> (or use the repository GitHub Pages URL)</p>
   </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <small>Token Studio — demo client</small>
+    </div>
+  </footer>
+
   <script src="app.js"></script>
 </body>
 </html>

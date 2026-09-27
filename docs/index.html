@@ -5,72 +5,98 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Token Studio (SPA) — OIDC Test App</title>
   <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <main>
-    <h1>Token Studio (SPA)</h1>
-    <p class="lead">Single-page OIDC test client (Authorization Code + PKCE or implicit). Use this to test OIDC from GitHub Pages. Note: token endpoint CORS is required for code exchange in-browser.</p>
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="/token_studio/">
+        <!-- simple svg-inspired logomark -->
+        <svg width="36" height="36" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect width="36" height="36" rx="6" fill="#071b2f" />
+          <path d="M6 26 L12 14 L18 20 L24 10 L30 20" stroke="#d81f4a" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <span class="brand-text">Token Studio</span>
+      </a>
+      <nav class="header-right">
+        <a class="cta" href="https://www.wavestone.com/en/" target="_blank" rel="noopener">Wavestone</a>
+      </nav>
+    </div>
+  </header>
 
-    <form id="configForm">
-      <label>Issuer URL
-        <input type="url" name="issuer" required placeholder="https://idp.example.com/auth/realms/demo" />
-      </label>
+  <main class="container">
+    <section class="panel">
+      <h1>Token Studio (SPA)</h1>
+      <p class="lead">A lightweight OIDC test client for your Identity Provider. Designed for quick integration tests using Authorization Code + PKCE or implicit flows.</p>
 
-      <label>Client ID
-        <input type="text" name="client_id" required />
-      </label>
+      <form id="configForm" class="form-grid">
+        <label>Issuer URL
+          <input type="url" name="issuer" required placeholder="https://idp.example.com/auth/realms/demo" value="http://localhost:8080/realms/idp" />
+        </label>
 
-      <label>Redirect URI
-        <input type="url" name="redirect_uri" placeholder="https://<your-user>.github.io/token_studio/callback.html" />
-      </label>
+        <label>Client ID
+          <input type="text" name="client_id" required value="token-studio" />
+        </label>
 
-      <label>Response type
-        <input type="text" name="response_type" value="code" />
-        <small class="hint">Examples: <code>code</code> (Authorization Code + PKCE), <code>id_token token</code> (implicit), <code>code id_token</code> (hybrid)</small>
-      </label>
+        <label>Redirect URI
+          <input type="url" name="redirect_uri" placeholder="https://<your-user>.github.io/token_studio/callback.html" value="https://nfr-ws.github.io/token_studio/callback.html" />
+        </label>
 
-      <label>Scope
-        <input type="text" name="scope" value="openid email profile" />
-      </label>
+        <label>Response type
+          <input type="text" name="response_type" value="code" />
+          <small class="hint">Examples: <code>code</code> (Authorization Code + PKCE), <code>id_token token</code> (implicit), <code>code id_token</code> (hybrid)</small>
+        </label>
 
-      <label>ACR values
-        <input type="text" name="acr_values" />
-      </label>
+        <label>Scope
+          <input type="text" name="scope" value="openid email profile" />
+        </label>
 
-      <label>Claims (JSON)
-        <textarea name="claims" placeholder='{"id_token": {"auth_time": {"essential": true}}}'></textarea>
-      </label>
+        <label>ACR values
+          <input type="text" name="acr_values" />
+        </label>
 
-      <label>Prompt
-        <input type="text" name="prompt" />
-      </label>
+        <label>Claims (JSON)
+          <textarea name="claims" placeholder='{"id_token": {"auth_time": {"essential": true}}}'></textarea>
+        </label>
 
-      <label>Extra params (one key=value per line)
-        <textarea name="extra" placeholder="login_hint=user@example.com\nui_locales=en"></textarea>
-      </label>
+        <label>Prompt
+          <input type="text" name="prompt" />
+        </label>
 
-      <label><input type="checkbox" name="pkce" checked /> Use PKCE (required for code flow in public clients)</label>
+        <label>Extra params (one key=value per line)
+          <textarea name="extra" placeholder="login_hint=user@example.com\nui_locales=en"></textarea>
+        </label>
 
-      <p>
-        <button type="submit">Start authentication</button>
-      </p>
-    </form>
+        <div class="form-footer">
+          <label class="checkbox"><input type="checkbox" name="pkce" checked /> Use PKCE (required for code flow in public clients)</label>
+          <button type="submit" class="btn btn-primary">Start authentication</button>
+        </div>
+      </form>
 
-    <section id="notes">
-      <h2>Notes</h2>
-      <ul>
-        <li>Register the redirect URI in your IdP. For GitHub Pages the redirect URI is usually: <code>https://&lt;your-user&gt;.github.io/token_studio/callback.html</code></li>
-        <li>Authorization Code + PKCE is recommended. The browser exchanges code for tokens — this requires the IdP token endpoint to allow CORS.</li>
-        <li>If the IdP does not allow CORS on the token endpoint use the implicit flow (tokens in fragment) or deploy the server app instead.</li>
-      </ul>
+      <section id="notes" class="muted">
+        <h2>Notes</h2>
+        <ul>
+          <li>Register the redirect URI in your IdP: <code>https://nfr-ws.github.io/token_studio/callback.html</code></li>
+          <li>The SPA exchanges code for tokens in-browser — your IdP token endpoint must allow CORS from GitHub Pages.</li>
+          <li>If the token endpoint blocks CORS use implicit flow or run the Flask server instead.</li>
+        </ul>
+      </section>
+
     </section>
 
-    <section id="discoveryResult" hidden>
+    <section id="discoveryResult" class="panel" hidden>
       <h2>Discovery</h2>
       <pre id="discoveryJson"></pre>
     </section>
 
   </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <small>Token Studio — demo client · Not for production use</small>
+    </div>
+  </footer>
+
   <script src="app.js"></script>
 </body>
 </html>
